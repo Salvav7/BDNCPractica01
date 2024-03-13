@@ -66,7 +66,7 @@ public class DAOProducto implements IDao<Producto> {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         Transaction tran = session.beginTransaction();
-        List<Producto> productos = session.createQuery("FROM producto", Producto.class).list();
+        List<Producto> productos = session.createQuery("FROM Producto", Producto.class).list();
         tran.commit();
         return productos;
     }

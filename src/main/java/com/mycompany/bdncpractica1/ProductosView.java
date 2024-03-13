@@ -17,21 +17,15 @@ import org.hibernate.Transaction;
  */
 public class ProductosView extends javax.swing.JInternalFrame {
 
+    private DAOProducto dao = new DAOProducto();
+    private ProductoTableModel<Producto> model = null;
+
     /**
      * Creates new form ProductosView
      */
     public ProductosView() {
         initComponents();
         txtClave.disable();
-    }
-
-    private void fillTable() {
-        Vector<Producto> productos = new Vector();
-        Vector<String> columnas = new Vector();
-        columnas.add("");
-        columnas.add("");
-        columnas.add("");
-        columnas.add("");
     }
 
     /**
@@ -274,7 +268,6 @@ public class ProductosView extends javax.swing.JInternalFrame {
         p.setPrecioVenta(Double.parseDouble(txtPrecioVenta.getText()));
         p.setPrecioCompra(Double.parseDouble(txtCosto.getText()));
 
-        DAOProducto dao = new DAOProducto();
         boolean res = dao.guardar(p);
         if (res) {
             JOptionPane.showMessageDialog(null, "Exito");
@@ -380,15 +373,26 @@ public class ProductosView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnBuscarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarTodosActionPerformed
-        SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.getCurrentSession();
 
-        Transaction tran = session.beginTransaction();
-
-        List<Producto> productos = session.createQuery("from Producto", Producto.class).getResultList();
-        tran.commit();
-
-        ProductoTableModel model = new ProductoTableModel(productos);
+        String[] columnNames = {"Clave", "Descripción", "Precio de Venta", "Costo"};
+        List<Producto> productos = dao.findAll();
+        model = new ProductoTableModel<Producto>(columnNames, productos) {
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                switch (columnIndex) {
+                    case 0:
+                        return lstValores.get(rowIndex).getId();
+                    case 1:
+                        return lstValores.get(rowIndex).getDescripcion();
+                    case 2:
+                        return lstValores.get(rowIndex).getPrecioVenta();
+                    case 3:
+                        return lstValores.get(rowIndex).getPrecioCompra();
+                    default:
+                        return null;
+                }
+            }
+        };
 
         jTableProductos.setModel(model);
     }//GEN-LAST:event_btnBuscarTodosActionPerformed
