@@ -286,22 +286,16 @@ public class ProductosView extends javax.swing.JInternalFrame {
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
 
-        SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.getCurrentSession();
-
         Long clave = Long.parseLong(txtClave.getText());
 
-        Transaction tran = session.beginTransaction();
-
-        Producto producto = session.get(Producto.class, clave);
-        tran.commit();
-
+        Producto producto = dao.findById(clave);
+  
         if (producto != null) {
             txtDescripcion.setText(producto.getDescripcion());
             txtPrecioVenta.setText(String.valueOf(producto.getPrecioVenta()));
             txtCosto.setText(String.valueOf(producto.getPrecioCompra()));
         } else {
-            JOptionPane.showMessageDialog(null, "No se encontró un producto con la clave " + clave);
+            JOptionPane.showMessageDialog(null, "No se encontró ");
         }
 
     }//GEN-LAST:event_btnBuscarActionPerformed
@@ -313,27 +307,19 @@ public class ProductosView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.getCurrentSession();
 
         Long clave = Long.parseLong(txtClave.getText());
 
-        Transaction tran = session.beginTransaction();
-
-        Producto producto = session.get(Producto.class, clave);
+        Producto producto = dao.findById(clave);
 
         if (producto != null) {
-            session.delete(producto);
-            tran.commit();
+            dao.eliminar(producto);
 
             JOptionPane.showMessageDialog(null, "Eliminado");
 
-            txtClave.setText("");
-            txtDescripcion.setText("");
-            txtPrecioVenta.setText("");
-            txtCosto.setText("");
+            txtClave.setText("");;
         } else {
-            JOptionPane.showMessageDialog(null, "No se encontró un producto con la clave " + clave);
+            JOptionPane.showMessageDialog(null, "No se encontro");
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
@@ -345,22 +331,17 @@ public class ProductosView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        SessionFactory sf = HibernateUtil.getSessionFactory();
-        Session session = sf.getCurrentSession();
-
+    
         Long clave = Long.parseLong(txtClave.getText());
 
-        Transaction tran = session.beginTransaction();
-
-        Producto producto = session.get(Producto.class, clave);
+        Producto producto = dao.findById(clave);
 
         if (producto != null) {
             producto.setDescripcion(txtDescripcion.getText());
             producto.setPrecioVenta(Double.parseDouble(txtPrecioVenta.getText()));
             producto.setPrecioCompra(Double.parseDouble(txtCosto.getText()));
 
-            session.update(producto);
-            tran.commit();
+            dao.actualizar(producto);
 
             JOptionPane.showMessageDialog(null, "Exito.");
             txtClave.setText("");
@@ -368,7 +349,7 @@ public class ProductosView extends javax.swing.JInternalFrame {
             txtPrecioVenta.setText("");
             txtCosto.setText("");
         } else {
-            JOptionPane.showMessageDialog(null, "No se encontró un producto con la clave " + clave);
+            JOptionPane.showMessageDialog(null, "No se encontró ");
         }
     }//GEN-LAST:event_btnModificarActionPerformed
 
